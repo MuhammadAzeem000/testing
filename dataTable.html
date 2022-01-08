@@ -9,11 +9,20 @@
       rel="stylesheet"
       href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"
     />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
     <style></style>
   </head>
   <body>
-    <button id="addRow">Add</button>
-    <button id="removeRow">Remove</button>
+    <div style="margin-bottom: 5px">
+      <button id="add">Add</button>
+      <button id="fetch">Fetch</button>
+      <button id="get">Get</button>
+      <button id="reset">Reset</button>
+    </div>
+
     <table id="example" class="display" style="width: 100%">
       <!-- <thead>
         <tr>
@@ -38,21 +47,36 @@
           <th></th>
           <th></th>
           <th></th>
+          <th></th>
         </tr>
       </tfoot>
     </table>
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+      var intVal = function (i) {
+        return typeof i === "string"
+          ? i.replace(/[\$,]/g, "") * 1
+          : typeof i === "number"
+          ? i
+          : 0;
+      };
+      var table;
       $(document).ready(function () {
-        var table;
         table = $("#example").DataTable({
           // ajax: "./api.json",
+          lengthMenu: [
+            [5, 10, 15, -1],
+            [5, 10, 15, "All"],
+          ],
           columns: [
             {
               title: "SNo",
               data: "",
+              width: "30px",
+              // orderable: false,
               render: function (data, type, row, n) {
                 return n.row;
               },
@@ -61,65 +85,64 @@
               title: "Name",
               data: "name",
               render: function (data, type, row) {
-                return `<input type="text" value="${data}" placeholder="Name" id="S_Name" />`;
+                return `<input type="text" value="${
+                  data !== null ? data : ""
+                }" placeholder="Name" id="S_Name" />`;
               },
             },
             {
               title: "Position",
               data: "position",
               render: function (data, type, row, o) {
-                return `<input type="text" value="${data}" placeholder="Position" id="S_Position" />`;
+                return `<input type="text" value="${
+                  data !== null ? data : ""
+                }" placeholder="Position" id="S_Position" />`;
               },
             },
             {
               title: "Office",
               data: "office",
               render: function (data, type, row) {
-                return `<input type="text" value="${data}" placeholder="Office" id="S_Office" />`;
+                return `<input type="text" value="${
+                  data !== null ? data : ""
+                }" placeholder="Office" id="S_Office" />`;
               },
             },
             {
               title: "Salary",
               data: "salary",
               render: function (data, type, row) {
-                return `<input type="text" value="${data}" placeholder="Salary" id="S_Salary" />`;
+                return `<input type="text" value="${
+                  data !== null ? data : ""
+                }" placeholder="Salary" id="S_Salary" />`;
+              },
+            },
+            {
+              title: "=",
+              data: "",
+              render: function (data, type, row) {
+                return `<input type="button" value="Remove" id="removeRow" />`;
               },
             },
           ],
           // createdRow: function (row, data, index, node) {
           //   // console.log(row, data, index, node);
           // },
-          // footerCallback: function (row, data, start, end, display) {
-          //   var api = this.api();
-          //   // Remove the formatting to get integer data for summation
-          //   var intVal = function (i) {
-          //     return typeof i === "string"
-          //       ? i.replace(/[\$,]/g, "") * 1
-          //       : typeof i === "number"
-          //       ? i
-          //       : 0;
-          //   };
-          //   var total = api
-          //     .column(4, { page: "current" })
-          //     .data()
-          //     .reduce(function (a, b) {
-          //       return intVal(a) + intVal(b);
-          //     }, 0);
-          //   $(api.column(4).footer()).html(`$ ${total}`);
-          // },
+          footerCallback: function (row, data, start, end, display) {
+            var api = this.api();
+            // Remove the formatting to get integer data for summation
+            var total = api
+              // .column(4, { page: "current" })
+              .column(4)
+              .data()
+              .reduce(function (a, b) {
+                return intVal(a) + intVal(b);
+              }, 0);
+            $(api.column(4).footer()).html(`$ ${total}`);
+          },
         });
 
-        $("#addRow").click(function () {
-          table.row
-            .add({
-              name: "",
-              position: "",
-              office: "",
-              salary: "",
-            })
-            .draw(false);
-          table.page("last").draw("page");
-        });
+        //input fields
         $(document).on(
           "input",
           "#S_Name, #S_Position, #S_Office, #S_Salary",
@@ -142,7 +165,7 @@
                   .column(4)
                   .data()
                   .reduce(function (a, b) {
-                    return Number(a) + Number(b);
+                    return intVal(a) + intVal(b);
                   }, 0);
 
                 $(table.column(4).footer()).html(`$ ${total}`);
@@ -152,10 +175,54 @@
             }
           }
         );
-        $("#removeRow").click(function () {
-          console.log(table.rows().data());
-          // console.log("re");
+
+        //Add
+        $("#add").click(function () {
+          console.log("Adding..");
+          table.row
+            .add({
+              name: null,
+              position: null,
+              office: null,
+              salary: null,
+            })
+            .draw(false);
+          table.page("last").draw("page");
         });
+
+        //Fetch
+        $("#fetch").click(function () {
+          console.log("fetching...");
+          table.ajax.url("/api.json").load();
+        });
+
+        //Get
+        $("#get").click(function () {
+          console.log("getting..");
+          console.log(table.rows().data());
+        });
+
+        //Reset
+        $("#reset").click(function () {
+          console.log("Reset..");
+          table.clear().draw();
+        });
+
+        $(document).on("click", "#removeRow", function () {
+          console.log("remove row..");
+          table.row($(this).parents("tr")).remove().draw();
+        });
+
+        // table.on("search.dt", function () {
+        //   console.log("Searching...");
+        //   // table
+        //   //   .column(0)
+        //   //   .nodes()
+        //   //   .each(function (cell, i) {
+        //   //     cell.innerHTML = i + 1;
+        //   //     // console.log(cell, i);
+        //   //   });
+        // });
       });
     </script>
   </body>
