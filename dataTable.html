@@ -23,6 +23,12 @@
       <button id="reset">Reset</button>
     </div>
 
+    <div style="margin-bottom: 5px">
+      <select class="js-example-basic-single">
+        <option value=""></option>
+      </select>
+    </div>
+
     <table id="example" class="display" style="width: 100%">
       <!-- <thead>
         <tr>
@@ -64,6 +70,23 @@
           : 0;
       };
       var table;
+      var customData = [];
+      $.ajax({
+        url: "./api.json",
+        beforeSend: function () {
+          // setting a timeout
+          console.log("loading..");
+        },
+        success: function ({ data }) {
+          $.each(data, function (idx, opt) {
+            customData.push({ id: opt.id, text: opt.name });
+          });
+        },
+        complete: function () {
+          // setting a timeout
+          console.log("done..");
+        },
+      });
       $(document).ready(function () {
         table = $("#example").DataTable({
           // ajax: "./api.json",
@@ -76,9 +99,8 @@
               title: "SNo",
               data: "",
               width: "30px",
-              // orderable: false,
-              render: function (data, type, row, n) {
-                return n.row;
+              render: function (data, type, orow, { row }) {
+                return row;
               },
             },
             {
@@ -205,6 +227,7 @@
         //Reset
         $("#reset").click(function () {
           console.log("Reset..");
+          console.log(select.select2("data")[0]);
           table.clear().draw();
         });
 
@@ -223,6 +246,22 @@
         //   //     // console.log(cell, i);
         //   //   });
         // });
+        var select;
+        select = $(".js-example-basic-single").select2({
+          placeholder: "Select a state",
+          width: "100%",
+          allowClear: true,
+          ajax: {
+            url: "/select2.json",
+            dataType: "json",
+            async: true,
+            processResults: function (r) {
+              return {
+                results: r,
+              };
+            },
+          },
+        });
       });
     </script>
   </body>
