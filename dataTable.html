@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <button id="addRow">Add</button>
+    <button id="removeRow">Remove</button>
+    <table id="example" class="display" style="width: 100%">
+      <!-- <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Office</th>
+          <th>Salary</th>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Office</th>
+          <th>Salary</th>
+        </tr>
+      </tfoot> -->
+      <tfoot>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        var table;
+        table = $("#example").DataTable({
+          // ajax: "./api.json",
+          columns: [
+            {
+              title: "SNo",
+              data: "",
+              render: function (data, type, row, n) {
+                return n.row;
+              },
+            },
+            {
+              title: "Name",
+              data: "name",
+              render: function (data, type, row) {
+                return `<input type="text" value="${data}" placeholder="Name" id="S_Name" />`;
+              },
+            },
+            {
+              title: "Position",
+              data: "position",
+              render: function (data, type, row, o) {
+                return `<input type="text" value="${data}" placeholder="Position" id="S_Position" />`;
+              },
+            },
+            {
+              title: "Office",
+              data: "office",
+              render: function (data, type, row) {
+                return `<input type="text" value="${data}" placeholder="Office" id="S_Office" />`;
+              },
+            },
+            {
+              title: "Salary",
+              data: "salary",
+              render: function (data, type, row) {
+                return `<input type="text" value="${data}" placeholder="Salary" id="S_Salary" />`;
+              },
+            },
+          ],
+          // createdRow: function (row, data, index, node) {
+          //   // console.log(row, data, index, node);
+          // },
+          // footerCallback: function (row, data, start, end, display) {
+          //   var api = this.api();
+          //   // Remove the formatting to get integer data for summation
+          //   var intVal = function (i) {
+          //     return typeof i === "string"
+          //       ? i.replace(/[\$,]/g, "") * 1
+          //       : typeof i === "number"
+          //       ? i
+          //       : 0;
+          //   };
+          //   var total = api
+          //     .column(4, { page: "current" })
+          //     .data()
+          //     .reduce(function (a, b) {
+          //       return intVal(a) + intVal(b);
+          //     }, 0);
+          //   $(api.column(4).footer()).html(`$ ${total}`);
+          // },
+        });
+
+        $("#addRow").click(function () {
+          table.row
+            .add({
+              name: "",
+              position: "",
+              office: "",
+              salary: "",
+            })
+            .draw(false);
+          table.page("last").draw("page");
+        });
+        $(document).on(
+          "input",
+          "#S_Name, #S_Position, #S_Office, #S_Salary",
+          function () {
+            var c = table.row($(this).closest("tr")).data();
+            // console.log(table.column(4).footer());
+            switch ($(this).attr("id")) {
+              case "S_Name":
+                c.name = $(this).val();
+                break;
+              case "S_Position":
+                c.position = $(this).val();
+                break;
+              case "S_Office":
+                c.office = $(this).val();
+                break;
+              case "S_Salary":
+                c.salary = $(this).val();
+                var total = table
+                  .column(4)
+                  .data()
+                  .reduce(function (a, b) {
+                    return Number(a) + Number(b);
+                  }, 0);
+
+                $(table.column(4).footer()).html(`$ ${total}`);
+                break;
+              default:
+                return "";
+            }
+          }
+        );
+        $("#removeRow").click(function () {
+          console.log(table.rows().data());
+          // console.log("re");
+        });
+      });
+    </script>
+  </body>
+</html>
