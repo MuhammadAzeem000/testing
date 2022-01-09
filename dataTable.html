@@ -54,6 +54,7 @@
           <th></th>
           <th></th>
           <th></th>
+          <th></th>
         </tr>
       </tfoot>
     </table>
@@ -97,10 +98,11 @@
           columns: [
             {
               title: "SNo",
-              data: "",
+              data: "id",
               width: "30px",
               render: function (data, type, orow, { row }) {
-                return row;
+                console.log(data);
+                return data ? data : row;
               },
             },
             {
@@ -110,6 +112,17 @@
                 return `<input type="text" value="${
                   data !== null ? data : ""
                 }" placeholder="Name" id="S_Name" />`;
+              },
+            },
+            {
+              title: "Select",
+              data: "",
+              render: function (data, type, row) {
+                return `<div>
+                  <select class="js-example-basic-single">
+                    <option value=""></option>
+                    </select>
+                    </div>`;
               },
             },
             {
@@ -140,27 +153,36 @@
               },
             },
             {
-              title: "=",
+              title: `=`,
               data: "",
               render: function (data, type, row) {
                 return `<input type="button" value="Remove" id="removeRow" />`;
               },
             },
           ],
-          // createdRow: function (row, data, index, node) {
-          //   // console.log(row, data, index, node);
-          // },
+          createdRow: function (row, data, index, node) {
+            console.log(row, data, index, node);
+            var s = $(row).find(".js-example-basic-single").select2({
+              placeholder: "Select",
+              width: "100%",
+              data: customData,
+            });
+            if (data && data.id) {
+              $(s).val(data.id).trigger("change");
+            }
+          },
           footerCallback: function (row, data, start, end, display) {
             var api = this.api();
             // Remove the formatting to get integer data for summation
             var total = api
               // .column(4, { page: "current" })
-              .column(4)
+              .column(5)
               .data()
               .reduce(function (a, b) {
+                console.log(a, b);
                 return intVal(a) + intVal(b);
               }, 0);
-            $(api.column(4).footer()).html(`$ ${total}`);
+            $(api.column(5).footer()).html(`$ ${total}`);
           },
         });
 
@@ -203,6 +225,7 @@
           console.log("Adding..");
           table.row
             .add({
+              id: null,
               name: null,
               position: null,
               office: null,
@@ -236,6 +259,10 @@
           table.row($(this).parents("tr")).remove().draw();
         });
 
+        $(document).on("change", ".js-example-basic-single", function () {
+          var data = table.row($(this).parents("tr")).data();
+          data.id = $(this).val();
+        });
         // table.on("search.dt", function () {
         //   console.log("Searching...");
         //   // table
@@ -246,22 +273,22 @@
         //   //     // console.log(cell, i);
         //   //   });
         // });
-        var select;
-        select = $(".js-example-basic-single").select2({
-          placeholder: "Select a state",
-          width: "100%",
-          allowClear: true,
-          ajax: {
-            url: "/select2.json",
-            dataType: "json",
-            async: true,
-            processResults: function (r) {
-              return {
-                results: r,
-              };
-            },
-          },
-        });
+        // var select;
+        // select = $(".js-example-basic-single").select2({
+        //   placeholder: "Select a state",
+        //   width: "100%",
+        //   allowClear: true,
+        //   ajax: {
+        //     url: "/select2.json",
+        //     dataType: "json",
+        //     async: true,
+        //     processResults: function (r) {
+        //       return {
+        //         results: r,
+        //       };
+        //     },
+        //   },
+        // });
       });
     </script>
   </body>
