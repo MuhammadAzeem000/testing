@@ -23,12 +23,6 @@
       <button id="reset">Reset</button>
     </div>
 
-    <div style="margin-bottom: 5px">
-      <select class="js-example-basic-single">
-        <option value=""></option>
-      </select>
-    </div>
-
     <table id="example" class="display" style="width: 100%">
       <!-- <thead>
         <tr>
@@ -60,8 +54,17 @@
     </table>
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.colVis.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
     <script>
       var intVal = function (i) {
         return typeof i === "string"
@@ -91,6 +94,40 @@
       $(document).ready(function () {
         table = $("#example").DataTable({
           // ajax: "./api.json",
+          dom: "Bfrtip",
+          searching: false,
+          select: true,
+          buttons: [
+            "colvis",
+            {
+              extend: "print",
+              text: "Print",
+              autoPrint: false,
+              title: "Azeem Test Run",
+              messageTop:
+                "This print was produced using the Print button for DataTables",
+              messageBottom:
+                "This print was produced using the Print button for DataTables",
+              exportOptions: {
+                columns: ":visible",
+              },
+              customize: function (win) {
+                $(win.document.body).css("font-size", "10px");
+                $(win.document.body)
+                  .find("table")
+                  .css("background-color", "red");
+                console.log(
+                  $(win.document.body)
+                    .find("table")
+                    .css("background-color", "red")
+                );
+              },
+            },
+            "copy",
+            "csv",
+            "excel",
+            "pdf",
+          ],
           lengthMenu: [
             [5, 10, 15, -1],
             [5, 10, 15, "All"],
@@ -272,22 +309,6 @@
         //   //     cell.innerHTML = i + 1;
         //   //     // console.log(cell, i);
         //   //   });
-        // });
-        // var select;
-        // select = $(".js-example-basic-single").select2({
-        //   placeholder: "Select a state",
-        //   width: "100%",
-        //   allowClear: true,
-        //   ajax: {
-        //     url: "/select2.json",
-        //     dataType: "json",
-        //     async: true,
-        //     processResults: function (r) {
-        //       return {
-        //         results: r,
-        //       };
-        //     },
-        //   },
         // });
       });
     </script>
