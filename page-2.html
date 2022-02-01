@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://printjs-4de6.kxcdn.com/print.min.css"
+    />
+    <title>Document</title>
+    <link rel="stylesheet" href="./table.css" />
+  </head>
+  <body>
+    <div id="toolbox">
+      <button type="button" onclick="PrintHtml()">Print Table 2</button>
+      <button type="button" onclick="ZoomIn()">Zoom In</button>
+      <button type="button" onclick="ZoomOut()">Zoom Out</button>
+    </div>
+    <div id="tableBox"></div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+    <script src="./printThis.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#tableBox").append($(window.myTable));
+      });
+
+      function PrintHtml() {
+        $("#printTable").printThis({
+          debug: false, // show the iframe for debugging
+          importCSS: true, // import parent page css
+          importStyle: false, // import style tags
+          printContainer: true, // print outer container/$.selector
+          loadCSS: "", // path to additional css file - use an array [] for multiple
+          pageTitle: "Hello I'm a Title", // add title to print page
+          removeInline: false, // remove inline styles from print elements
+          removeInlineSelector: "*", // custom selectors to filter inline styles. removeInline must be true
+          printDelay: 333, // variable print delay
+          header: "Hello I'm Header", // prefix to html
+          footer: "Hello I'm Footer", // postfix to html
+          base: false, // preserve the BASE tag or accept a string for the URL
+          formValues: true, // preserve input/form values
+          canvas: false, // copy canvas content
+          doctypeString: "...", // enter a different doctype for older markup
+          removeScripts: false, // remove script tags from print content
+          copyTagClasses: false, // copy classes from the html & body tag
+          beforePrintEvent: null, // function for printEvent in iframe
+          beforePrint: null, // function called before iframe is filled
+          afterPrint: null, // function called before iframe is removed
+        });
+      }
+      function ZoomIn() {
+        console.log("zoom in");
+      }
+      function ZoomOut() {
+        console.log("zoom out");
+      }
+    </script>
+  </body>
+</html>

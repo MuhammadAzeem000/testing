@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://printjs-4de6.kxcdn.com/print.min.css"
+    />
+    <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+  </head>
+  <body>
+    <table id="printTable">
+      <thead>
+        <tr>
+          <th>one</th>
+          <th>two</th>
+          <th>three</th>
+          <th>four</th>
+          <th>five</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>3</td>
+          <td>4</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>7</td>
+          <td>8</td>
+          <td>9</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>4</td>
+          <td>3</td>
+          <td>2</td>
+          <td>1</td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="button" onclick="ToolBar()">Open</button>
+    <button type="button" onclick="PrintHtml()">print</button>
+    <button type="button" onclick="Print()">Print JSON Data</button>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      function ToolBar() {
+        let myTable = $("#printTable");
+        let thisIsAnObject = { foo: "bar" };
+        let w = window.open("./page-2.html");
+        w.myVariable = thisIsAnObject;
+        w.myTable = myTable;
+      }
+      someJSONdata = [
+        {
+          name: "John Doe",
+          email: "john@doe.com",
+          phone: "111-111-1111",
+        },
+        {
+          name: "Barry Allen",
+          email: "barry@flash.com",
+          phone: "222-222-2222",
+        },
+        {
+          name: "Cool Dude",
+          email: "cool@dude.com",
+          phone: "333-333-3333",
+        },
+      ];
+
+      function Print() {
+        printJS({
+          printable: someJSONdata,
+          properties: ["name", "email", "phone"],
+          type: "json",
+          header: '<h3 class="custom-h3">My custom header</h3>',
+          style: ".custom-h3 { color: red; }",
+          gridHeaderStyle: "color: red;  border: 2px solid #3971A5;",
+          gridStyle: "border: 2px solid #3971A5;",
+        });
+      }
+      function PrintHtml() {
+        printJS({
+          header: "PrintJS - Form Element Selection",
+          printable: "printTable",
+          type: "html",
+          //   header: '<h3 class="custom-h3">My custom header</h3>',
+          //   style: ".custom-h3 { color: red; }",
+          //   header: "Hello",
+          //   gridHeaderStyle: "color: red;  border: 2px solid #3971A5;",
+          //   gridStyle: "border: 2px solid #3971A5;",
+        });
+      }
+      let table = $("#printTable");
+      $("#print").click(function () {
+        var win = window.open();
+        win.append("./page-2.html");
+        console.log(win, win.document.body);
+        $(win.document.body).append("hello");
+        // win.open(
+        //   "./page-2.html",
+        //   "Title",
+        //   "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=780,height=200,top=" +
+        //     (screen.height - 400) +
+        //     ",left=" +
+        //     (screen.width - 840)
+        // );
+        // win.document.body.innerHTML = "HTML";
+      });
+    </script>
+  </body>
+</html>
