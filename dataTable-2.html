@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css"
+    />
+    <title>Data Table Experiment</title>
+  </head>
+  <body>
+    <input type="text" id="myInput" />
+    <table id="example" class="display" style="width: 100%"></table>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        var table = $("#example").DataTable({
+          ajax: {
+            url: "./mps.json",
+            dataSrc: "demo",
+          },
+          columns: [
+            {
+              title: `<input type="text" placeholder="Search By Name" id="NameInput"/>`,
+              data: "Name",
+            },
+            {
+              title: `<input type="text" placeholder="Search By Age"/>`,
+              data: "Age",
+            },
+            {
+              title: `<input type="text" placeholder="Search By Gender"/>`,
+              data: "Gender",
+            },
+            {
+              title: `<input type="text" placeholder="Search By Party"/>`,
+              data: "Party",
+            },
+          ],
+
+          initComplete: function () {
+            // Apply the search
+            this.api()
+              .columns()
+              .every(function () {
+                var that = this;
+
+                $("input", this.header()).on("input", function () {
+                  if (that.search() !== this.value) {
+                    that.search(this.value).draw();
+                  }
+                });
+
+                // $("input", this.footer()).on("keyup change clear", function () {
+                //   if (that.search() !== this.value) {
+                //     that.search(this.value).draw();
+                //   }
+                // });
+              });
+          },
+        });
+
+        $("#example").on("click", "tbody td", function () {
+          var idx = table.cell(this).index().column;
+          alert("Data source: " + table.column(idx).dataSrc());
+        });
+        // $("#example tbody").on("click", "tr", function () {
+        //   var data = table.row($(this)).data();
+        //   alert(data.Name + "'s salary is: " + data.Age);
+        // });
+
+        // #myInput is a <input type="text"> element
+        // $("#NameInput").on("keyup", function () {
+        //   table.search(this.value).draw();
+        // });
+      });
+    </script>
+  </body>
+</html>
